@@ -48,7 +48,7 @@ void CabDiag::reset()
     done    = false;
     counter = 0;
 
-    video.clear_text_ram();
+	video->clear_text_ram();
     otiles.fill_tilemap_color(0x4F60);  
     osprites.disable_sprites();
 
@@ -58,10 +58,10 @@ void CabDiag::reset()
     // Write Palette To RAM
     uint32_t dst = 0x120000;
     const static uint32_t PAL_SERVICE[] = {0xFF, 0xFF00FF, 0xFF00FF, 0xFF0000};
-    video.write_pal32(&dst, PAL_SERVICE[0]);
-    video.write_pal32(&dst, PAL_SERVICE[1]);
-    video.write_pal32(&dst, PAL_SERVICE[2]);
-    video.write_pal32(&dst, PAL_SERVICE[3]);
+	video->write_pal32(&dst, PAL_SERVICE[0]);
+	video->write_pal32(&dst, PAL_SERVICE[1]);
+	video->write_pal32(&dst, PAL_SERVICE[2]);
+	video->write_pal32(&dst, PAL_SERVICE[3]);
 }
 
 void CabDiag::set(uint8_t state)
@@ -287,7 +287,7 @@ void CabDiag::init_crt()
     // Initalize Palette
     uint32_t dst = 0x120040;
     for (uint8_t i = 0; i < 16; i++)
-        video.write_pal32(&dst, PAL_CRT[i]);
+		video->write_pal32(&dst, PAL_CRT[i]);
 
     dst = 0x110438;
     blit1_block(dst,  0x8CF78CF7); dst += 8;
@@ -304,24 +304,24 @@ void CabDiag::blit_box()
 {
     // Draw Top Border
     uint32_t dst = 0x110030;
-    video.write_text16(&dst, 0x8001);
+	video->write_text16(&dst, 0x8001);
     for (uint8_t i = 0; i < 38; i++)
-        video.write_text16(&dst, 0x8002);
-    video.write_text16(&dst, 0x8003);
+		video->write_text16(&dst, 0x8002);
+	video->write_text16(&dst, 0x8003);
 
     // Draw Bottom Border
     dst = 0x110DB0;
-    video.write_text16(&dst, 0x8006);
+	video->write_text16(&dst, 0x8006);
     for (uint8_t i = 0; i < 38; i++)
-        video.write_text16(&dst, 0x8007);
-    video.write_text16(&dst, 0x8008);
+		video->write_text16(&dst, 0x8007);
+	video->write_text16(&dst, 0x8008);
 
     // Draw Left & Right Border
     dst = 0x1100B0;
     for (uint8_t i = 0; i < 26; i++)
     {
-        video.write_text16(dst,        0x8004);
-        video.write_text16(dst + 0x4E, 0x8005);
+		video->write_text16(dst,        0x8004);
+		video->write_text16(dst + 0x4E, 0x8005);
         dst += 0x80;
     }
 }
@@ -330,8 +330,8 @@ void CabDiag::blit1_block(uint32_t adr, uint32_t data)
 {
     for (uint8_t i = 0; i < 4; i++)
     {
-        video.write_text32(adr + 0, data);
-        video.write_text32(adr + 4, data);
+		video->write_text32(adr + 0, data);
+		video->write_text32(adr + 4, data);
         adr += 0x80;
     }
 }

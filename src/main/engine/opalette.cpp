@@ -43,7 +43,7 @@ void OPalette::setup_sky_palette()
     uint32_t dst = 0x120F00; // palette ram
 
     for (int16_t i = 0; i <= 0x1F; i++)
-        video.write_pal32(&dst, trackloader.read32(trackloader.pal_sky_data, &src));
+        video->write_pal32(&dst, trackloader.read32(trackloader.pal_sky_data, &src));
 }
 
 // Setup data in RAM necessary for sky palette fade.
@@ -58,7 +58,7 @@ void OPalette::setup_sky_change()
     uint32_t pal_addr = 0x120F00;
 
     for (int16_t i = 0; i <= 0x1F; i++)
-        pal_manip[i] = video.read_pal32(&pal_addr);
+        pal_manip[i] = video->read_pal32(&pal_addr);
 
     uint32_t stage_offset = oroad.stage_lookup_off;
 
@@ -245,7 +245,7 @@ void OPalette::cycle_sky_palette()
     uint32_t pal_addr = 0x120F00; // dst
 
     for (int16_t i = 0; i <= 0x1F; i++)
-        video.write_pal32(&pal_addr, pal_manip[i + pal_index]);
+        video->write_pal32(&pal_addr, pal_manip[i + pal_index]);
 }
 
 // ----------------------------------------------------------------------------
@@ -369,7 +369,7 @@ void OPalette::write_current_pal_to_ram()
     // Copy all of the road colour 1 stuff to RAM (0x120800 - 0x120810)  
     for (int16_t i = 0; i <= 7; i++)
     {
-        pal_fade[dst] = video.read_pal16(&src);
+        pal_fade[dst] = video->read_pal16(&src);
         dst += 9;
     }
 
@@ -378,7 +378,7 @@ void OPalette::write_current_pal_to_ram()
     // Copy all of the palette ground 1 stuff (0x20 bytes total)
     for (int16_t i = 0; i <= 0xF; i++)
     {
-        pal_fade[dst] = video.read_pal16(&src);
+        pal_fade[dst] = video->read_pal16(&src);
         dst += 9;
     }
 }
@@ -476,8 +476,8 @@ void OPalette::write_fade_to_palram()
 
     for (int16_t i = 0; i < 8; i++)
     {
-        video.write_pal16(&road1_pal_addr, pal_fade[src]);
-        video.write_pal16(&road2_pal_addr, pal_fade[src]);
+        video->write_pal16(&road1_pal_addr, pal_fade[src]);
+        video->write_pal16(&road2_pal_addr, pal_fade[src]);
         src += 9;
     }
 
@@ -486,8 +486,8 @@ void OPalette::write_fade_to_palram()
 
     for (int16_t i = 0; i < 16; i++)
     {
-        video.write_pal16(&road1_pal_addr, pal_fade[src]);
-        video.write_pal16(&road2_pal_addr, pal_fade[src]);
+        video->write_pal16(&road1_pal_addr, pal_fade[src]);
+        video->write_pal16(&road2_pal_addr, pal_fade[src]);
         src += 9;
     }
 }
@@ -508,31 +508,31 @@ void OPalette::setup_ground_color()
     for (int16_t i = 0; i < 8; i++)
     {
         uint32_t data = trackloader.read32(trackloader.pal_gnd_data, &src);
-        video.write_pal32(&dst_pal_ground1, data);
-        video.write_pal32(&dst_pal_ground2, data);
+        video->write_pal32(&dst_pal_ground1, data);
+        video->write_pal32(&dst_pal_ground2, data);
     }
 }
 
 void OPalette::setup_road_centre()
 {
-    video.write_pal32(0x12080C, trackloader.current_level->palr1.stripe_centre);
-    video.write_pal32(0x12081C, trackloader.current_level->palr2.stripe_centre);
+    video->write_pal32(0x12080C, trackloader.current_level->palr1.stripe_centre);
+    video->write_pal32(0x12081C, trackloader.current_level->palr2.stripe_centre);
 }
 
 void OPalette::setup_road_stripes()
 {
-    video.write_pal32(0x120804, trackloader.current_level->palr1.stripe);
-    video.write_pal32(0x120814, trackloader.current_level->palr2.stripe);
+    video->write_pal32(0x120804, trackloader.current_level->palr1.stripe);
+    video->write_pal32(0x120814, trackloader.current_level->palr2.stripe);
 }
 
 void OPalette::setup_road_side()
 {
-    video.write_pal32(0x120808, trackloader.current_level->palr1.side);
-    video.write_pal32(0x120818, trackloader.current_level->palr2.side);
+    video->write_pal32(0x120808, trackloader.current_level->palr1.side);
+    video->write_pal32(0x120818, trackloader.current_level->palr2.side);
 }
 
 void OPalette::setup_road_colour()
 {
-    video.write_pal32(0x120800, trackloader.current_level->palr1.road);
-    video.write_pal32(0x120810, trackloader.current_level->palr2.road);
+    video->write_pal32(0x120800, trackloader.current_level->palr1.road);
+    video->write_pal32(0x120810, trackloader.current_level->palr2.road);
 }

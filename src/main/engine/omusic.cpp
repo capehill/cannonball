@@ -57,7 +57,7 @@ bool OMusic::load_widescreen_map()
 void OMusic::enable()
 {
     oferrari.car_ctrl_active = false;
-    video.clear_text_ram();
+    video->clear_text_ram();
     osprites.disable_sprites();
     otraffic.disable_traffic();
     //edit jump table 3
@@ -95,11 +95,11 @@ void OMusic::enable()
     // Widescreen tiles need additional palette information copied over
     if (tile_patch->loaded && config.s16_x_off > 0)
     {
-        video.tile_layer->patch_tiles(tile_patch);
+        video->tile_layer->patch_tiles(tile_patch);
         otiles.setup_palette_widescreen();
     }
 
-    video.tile_layer->set_x_clamp(video.tile_layer->CENTRE);
+    video->tile_layer->set_x_clamp(video->tile_layer->CENTRE);
 }
 
 void OMusic::disable()
@@ -110,16 +110,16 @@ void OMusic::disable()
         osprites.jump_table[i].control &= ~OSprites::ENABLE;
     }
 
-    video.tile_layer->set_x_clamp(video.tile_layer->RIGHT);
+    video->tile_layer->set_x_clamp(video->tile_layer->RIGHT);
 
     // Restore original palette for widescreen tiles.
     if (config.s16_x_off > 0)
     {
-        video.tile_layer->restore_tiles();
+        video->tile_layer->restore_tiles();
         otiles.setup_palette_tilemap();
     }
 
-    video.enabled = false; // Turn screen off
+    video->enabled = false; // Turn screen off
 }
 
 // Music Selection Screen: Setup Radio Sprite
@@ -250,8 +250,8 @@ void OMusic::tick()
         else
         {
             ohud.blit_text2(TEXT2_MAGICAL);
-            video.write_text32(0x1105C0, NOTE_TILES1);
-            video.write_text32(0x110640, NOTE_TILES2);
+            video->write_text32(0x1105C0, NOTE_TILES1);
+            video->write_text32(0x110640, NOTE_TILES2);
             music_selected = sound::MUSIC_MAGICAL;
         }
     }
@@ -272,8 +272,8 @@ void OMusic::tick()
         else
         {
             ohud.blit_text2(TEXT2_BREEZE);
-            video.write_text32(0x1105C6, NOTE_TILES1);
-            video.write_text32(0x110646, NOTE_TILES2);
+            video->write_text32(0x1105C6, NOTE_TILES1);
+            video->write_text32(0x110646, NOTE_TILES2);
             music_selected = sound::MUSIC_BREEZE;
         }
     }
@@ -294,8 +294,8 @@ void OMusic::tick()
         else
         {
             ohud.blit_text2(TEXT2_SPLASH);
-            video.write_text32(0x1105C8, NOTE_TILES1);
-            video.write_text32(0x110648, NOTE_TILES2);
+            video->write_text32(0x1105C8, NOTE_TILES1);
+            video->write_text32(0x110648, NOTE_TILES2);
             music_selected = sound::MUSIC_SPLASH;
         }
     }
@@ -365,7 +365,7 @@ void OMusic::blit_music_select()
 
     // Write 32 Palette Longs to Palette RAM
     for (int i = 0; i < 32; i++)
-        video.write_pal32(&dst_addr, roms.rom0.read32(&src_addr));
+        video->write_pal32(&dst_addr, roms.rom0.read32(&src_addr));
 
     // Set Tilemap Scroll
     otiles.set_scroll(config.s16_x_off);
@@ -385,7 +385,7 @@ void OMusic::blit_music_select()
         {
             dst_addr = tilemap16;
             for (int x = 0; x < cols; x++)
-                video.write_tile16(&dst_addr, tilemap->read16(&src_addr));
+                video->write_tile16(&dst_addr, tilemap->read16(&src_addr));
             tilemap16 += 0x80; // next line of tiles
         }
     }
@@ -407,7 +407,7 @@ void OMusic::blit_music_select()
                 // No Compression: write tile directly to tile ram
                 if (data != 0)
                 {
-                    video.write_tile16(&dst_addr, data);    
+                    video->write_tile16(&dst_addr, data);
                     x++;
                 }
                 // Compression
@@ -418,7 +418,7 @@ void OMusic::blit_music_select()
 
                     for (uint16_t i = 0; i <= count; i++)
                     {
-                        video.write_tile16(&dst_addr, value);
+                        video->write_tile16(&dst_addr, value);
                         x++;
                     }
                 }
@@ -428,6 +428,6 @@ void OMusic::blit_music_select()
 
         // Fix Misplaced tile on music select screen (above steering wheel)
         if (config.engine.fix_bugs)
-            video.write_tile16(0x10F730, 0x0C80);
+            video->write_tile16(0x10F730, 0x0C80);
     } 
 }

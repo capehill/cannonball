@@ -69,9 +69,9 @@ Outrun::~Outrun()
 void Outrun::init()
 {
     freeze_timer = cannonball_mode == MODE_TTRIAL ? true : config.engine.freeze_timer;
-    video.enabled = false;
+    video->enabled = false;
     select_course(config.engine.jap != 0, config.engine.prototype != 0);
-    video.clear_text_ram();
+    video->clear_text_ram();
 
     tick_counter = 0;
 
@@ -270,8 +270,8 @@ void Outrun::jump_table(Packet* packet)
         {
             if (outputs->calibrate_motor(packet->ai1, packet->mci, 0))
             {
-                video.enabled     = false;
-                video.clear_text_ram();
+                video->enabled     = false;
+                video->clear_text_ram();
                 oroad.horizon_set = 0;
                 boot();
             }
@@ -348,7 +348,7 @@ void Outrun::main_switch()
             break;
 
         case GS_INIT_LOGO:
-            video.clear_text_ram();
+            video->clear_text_ram();
             oferrari.car_ctrl_active = false;
             oinitengine.car_increment = 0;
             oferrari.car_inc_old = 0;
@@ -400,7 +400,7 @@ void Outrun::main_switch()
             //ROM:0000B3E8                 move.w  #-1,(ingame_active1).l              ; Denote in-game engine is active
             //ROM:0000B3F0                 clr.l   (prev_game_time).l                  ; Reset overall game time
             //ROM:0000B3F6                 move.w  #-1,(ingame_active2).l
-            video.clear_text_ram();
+            video->clear_text_ram();
             oferrari.car_ctrl_active = true;
             init_jump_table();
             oinitengine.init(cannonball_mode == MODE_TTRIAL ? ttrial.level : 0);
@@ -432,7 +432,7 @@ void Outrun::main_switch()
             ohud.blit_text1(TEXT1_CLEAR_START);
             ohud.blit_text1(TEXT1_CLEAR_CREDITS);
             osoundint.queue_sound(sound::INIT_CHEERS);
-            video.enabled = true;
+            video->enabled = true;
             game_state = GS_START1;
             ohud.draw_main_hud();
             // fall through
@@ -603,7 +603,7 @@ void Outrun::main_switch()
         // Reinitialize Game After High Score Entry
         // ----------------------------------------------------------------------------------------
         case GS_REINIT:
-            video.clear_text_ram();
+            video->clear_text_ram();
             game_state = GS_INIT;
             break;
     }
@@ -691,8 +691,8 @@ void Outrun::init_jump_table()
     obonus.init();
     outputs->init();
 
-    video.tile_layer->set_x_clamp(video.tile_layer->RIGHT);
-    video.sprite_layer->set_x_clip(false);
+    video->tile_layer->set_x_clamp(video->tile_layer->RIGHT);
+    video->sprite_layer->set_x_clip(false);
 }
 
 // -------------------------------------------------------------------------------
@@ -747,12 +747,12 @@ void Outrun::init_motor_calibration()
     oinputs.init();
     outputs->init();
 
-    video.tile_layer->set_x_clamp(video.tile_layer->RIGHT);
-    video.sprite_layer->set_x_clip(false);
+    video->tile_layer->set_x_clamp(video->tile_layer->RIGHT);
+    video->sprite_layer->set_x_clip(false);
 
     otiles.fill_tilemap_color(0x4F60); // Fill Tilemap Light Blue
 
-    video.enabled        = true;
+    video->enabled        = true;
     osoundint.has_booted = true;
 
     oroad.init();
@@ -764,10 +764,10 @@ void Outrun::init_motor_calibration()
     // Write Palette To RAM
     uint32_t dst = 0x120000;
     const static uint32_t PAL_SERVICE[] = {0xFF, 0xFF00FF, 0xFF00FF, 0xFF0000};
-    video.write_pal32(&dst, PAL_SERVICE[0]);
-    video.write_pal32(&dst, PAL_SERVICE[1]);
-    video.write_pal32(&dst, PAL_SERVICE[2]);
-    video.write_pal32(&dst, PAL_SERVICE[3]);
+    video->write_pal32(&dst, PAL_SERVICE[0]);
+    video->write_pal32(&dst, PAL_SERVICE[1]);
+    video->write_pal32(&dst, PAL_SERVICE[2]);
+    video->write_pal32(&dst, PAL_SERVICE[3]);
 }
 
 // -------------------------------------------------------------------------------
@@ -776,7 +776,7 @@ void Outrun::init_motor_calibration()
 
 void Outrun::init_attract()
 {
-    video.enabled             = true;
+    video->enabled             = true;
     osoundint.has_booted      = true;
     oferrari.car_ctrl_active  = true;
     oferrari.car_inc_old      = car_inc_bak >> 16;
@@ -838,8 +838,8 @@ void Outrun::check_freeplay_start()
 
 void Outrun::init_best_outrunners()
 {
-    video.enabled = false;
-    video.sprite_layer->set_x_clip(false); // Stop clipping in wide-screen mode.
+    video->enabled = false;
+    video->sprite_layer->set_x_clip(false); // Stop clipping in wide-screen mode.
     otiles.fill_tilemap_color(0); // Fill Tilemap Black
     osprites.disable_sprites();
     oroad.horizon_base = 0x154;

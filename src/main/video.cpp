@@ -38,7 +38,7 @@
 #include "sdl/rendersw.hpp"
 #endif //SDL2
 
-Video video;
+Video *video;
 
 Video::Video(void)
 {

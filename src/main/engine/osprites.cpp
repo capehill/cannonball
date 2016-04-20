@@ -139,7 +139,7 @@ void OSprites::update_sprites()
 	if (do_sprite_swap)
 	{
         do_sprite_swap = false;
-        video.sprite_layer->swap();
+        video->sprite_layer->swap();
         copy_palette_data();
 	}
 }
@@ -305,7 +305,7 @@ void OSprites::copy_palette_data()
         // Move 28 Bytes from ROM to palette RAM
         for (uint16_t j = 0; j < 7; j++)
         {
-            video.write_pal32(&dst_addr, roms.rom0.read32(&src_addr));
+            video->write_pal32(&dst_addr, roms.rom0.read32(&src_addr));
         }
     }
     pal_copy_count = 0; // All entries copied
@@ -537,13 +537,13 @@ void OSprites::blit_sprites()
         uint16_t* data = sprite_entries[i].data;
 
         // Write twelve bytes
-        video.write_sprite16(&dst_addr, data[0]);
-        video.write_sprite16(&dst_addr, data[1]);
-        video.write_sprite16(&dst_addr, data[2]);
-        video.write_sprite16(&dst_addr, data[3]);
-        video.write_sprite16(&dst_addr, data[4]);
-        video.write_sprite16(&dst_addr, data[5]);
-        video.write_sprite16(&dst_addr, data[6]);
+        video->write_sprite16(&dst_addr, data[0]);
+        video->write_sprite16(&dst_addr, data[1]);
+        video->write_sprite16(&dst_addr, data[2]);
+        video->write_sprite16(&dst_addr, data[3]);
+        video->write_sprite16(&dst_addr, data[4]);
+        video->write_sprite16(&dst_addr, data[5]);
+        video->write_sprite16(&dst_addr, data[6]);
 
         // Allign on correct boundary
         dst_addr += 2;

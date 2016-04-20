@@ -78,12 +78,11 @@ private:
 
     // Calibration Counter
     const static int COUNTER_RESET = 300;
-
-    const static uint8_t MOTOR_OFF    = 0;
-    const static uint8_t MOTOR_RIGHT  = 0x5;
-    const static uint8_t MOTOR_CENTRE = 0x8;
-    const static uint8_t MOTOR_LEFT   = 0xB;
-    
+private:
+    const static uint8_t MOTOR_OFF;//    = 0;
+    const static uint8_t MOTOR_RIGHT;//  = 0x5;
+    const static uint8_t MOTOR_CENTRE;// = 0x8;
+    const static uint8_t MOTOR_LEFT;//   = 0xB;
 
     // These are calculated during startup in the original game.
     // Here we just hardcode them, as the motor init code isn't ported.

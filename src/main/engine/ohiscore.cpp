@@ -52,7 +52,7 @@ void OHiScore::setup_pal_best()
     uint32_t dst = 0x120F00;
 
     for (int i = 0; i <= 0x1F; i++)
-        video.write_pal32(&dst, roms.rom0.read32(&src));
+        video->write_pal32(&dst, roms.rom0.read32(&src));
 }
 
 // Setup road colour for Best Outrunners High Score Entry
@@ -63,7 +63,7 @@ void OHiScore::setup_road_best()
     uint32_t dst = 0x120800;
 
     for (int i = 0; i <= 0x1F; i++)
-        video.write_pal32(&dst, 0);
+        video->write_pal32(&dst, 0);
 }
 
 // Initalize Default Score Table
@@ -123,7 +123,7 @@ void OHiScore::tick()
             set_display_pos();
             acc_prev = -1;
             state = STATE_DISPLAY;
-            video.enabled = true;
+            video->enabled = true;
             break;
 
         // Display Basic High Score Table
@@ -274,18 +274,18 @@ void OHiScore::blit_alphabet()
     // Address in text ram for characters
     uint32_t adr = 0x110BF0;
 
-    video.write_text16(&adr,       0x8D00); // Full Stop
-    video.write_text16(adr + 0x7E, 0x8D01);
-    video.write_text16(&adr,       0x8D04); // Arrow
-    video.write_text16(adr + 0x7E, 0x8D05);
-    video.write_text16(&adr,       0x8D02); // ED
-    video.write_text16(adr + 0x7E, 0x8D03);
+    video->write_text16(&adr,       0x8D00); // Full Stop
+    video->write_text16(adr + 0x7E, 0x8D01);
+    video->write_text16(&adr,       0x8D04); // Arrow
+    video->write_text16(adr + 0x7E, 0x8D05);
+    video->write_text16(&adr,       0x8D02); // ED
+    video->write_text16(adr + 0x7E, 0x8D03);
 
     // Colour selected tile red
     const uint16_t RED = 0x80;
     adr = 0x110BBC + (letter_selected << 1);
-    video.write_text8(adr,        (video.read_text8(adr) & 1) | RED);
-    video.write_text8(adr + 0x80, (video.read_text8(adr + 0x80) & 1) | RED);
+    video->write_text8(adr,        (video->read_text8(adr) & 1) | RED);
+    video->write_text8(adr + 0x80, (video->read_text8(adr + 0x80) & 1) | RED);
 }
 
 // Flash current initial that is being entered
@@ -303,7 +303,7 @@ void OHiScore::flash_entry(uint32_t adr)
         tile = (roms.rom0.read8(letter_selected + TILES_ALPHABET) & 0xFF) | 0x8600;
     }
 
-    video.write_text16(adr + (initial_selected << 1), tile);
+    video->write_text16(adr + (initial_selected << 1), tile);
 }
 
 // High Score Input
@@ -330,7 +330,7 @@ void OHiScore::do_input(uint32_t adr)
     // End option selected
     if (letter_selected == ENTRIES)
     {
-        video.write_text16(adr + (initial_selected << 1), 0x20); // Write blank tile to ram
+        video->write_text16(adr + (initial_selected << 1), 0x20); // Write blank tile to ram
         ostats.frame_counter = 0;
         ostats.time_counter = 0;
         state = STATE_DONE;
@@ -346,7 +346,7 @@ void OHiScore::do_input(uint32_t adr)
             else if (initial_selected == 2)
                 scores[score_pos].initial3 = 0x20;
 
-            video.write_text16(adr + (initial_selected << 1), 0x20); // Write blank tile to ram
+            video->write_text16(adr + (initial_selected << 1), 0x20); // Write blank tile to ram
 
             initial_selected--;
         }
@@ -364,7 +364,7 @@ void OHiScore::do_input(uint32_t adr)
         else if (initial_selected == 2)
             scores[score_pos].initial3 = tile;
 
-        video.write_text16(adr + (initial_selected << 1), tile | 0x8600); // Write initial tile to ram
+        video->write_text16(adr + (initial_selected << 1), tile | 0x8600); // Write initial tile to ram
 
         // Final Initial
         if (++initial_selected >= 3)
@@ -436,7 +436,7 @@ void OHiScore::display_scores()
     {
         // Init
         case 0:
-            video.clear_text_ram();
+            video->clear_text_ram();
             setup_minicars();
             blit_score_table();
             best_or_state = 1; // Set State to TICK
@@ -520,29 +520,29 @@ void OHiScore::tick_minicars()
             // Two versions of routine, one that only blits the car in two tiles
             if ((minicar->pos >> 8) & BIT_0)
             {
-                video.write_text32(&textram_adr, roms.rom0.read32(tiles_adr)); // blit car in 2 tiles
-                video.write_text32(&textram_adr, roms.rom0.read32(&tiles_smoke_adr)); // smoke trail tile 1
-                video.write_text16(&textram_adr, roms.rom0.read16(&tiles_smoke_adr)); // smoke trail tile 2
+                video->write_text32(&textram_adr, roms.rom0.read32(tiles_adr)); // blit car in 2 tiles
+                video->write_text32(&textram_adr, roms.rom0.read32(&tiles_smoke_adr)); // smoke trail tile 1
+                video->write_text16(&textram_adr, roms.rom0.read16(&tiles_smoke_adr)); // smoke trail tile 2
             }
             // Blit at an offset
             // The second blits the mini-car at an offset halfway into the tile (and hence takes 3 tiles)
             else
             {
-                video.write_text32(&textram_adr, roms.rom0.read32(4 + tiles_adr)); // blit car in 3 tiles
-                video.write_text16(&textram_adr, roms.rom0.read16(8 + tiles_adr)); // blit car in 3 tiles
-                video.write_text32(&textram_adr, roms.rom0.read32(&tiles_smoke_adr)); // smoke trail tile 1
-                video.write_text16(&textram_adr, roms.rom0.read16(&tiles_smoke_adr)); // smoke trail tile 2
+                video->write_text32(&textram_adr, roms.rom0.read32(4 + tiles_adr)); // blit car in 3 tiles
+                video->write_text16(&textram_adr, roms.rom0.read16(8 + tiles_adr)); // blit car in 3 tiles
+                video->write_text32(&textram_adr, roms.rom0.read32(&tiles_smoke_adr)); // smoke trail tile 1
+                video->write_text16(&textram_adr, roms.rom0.read16(&tiles_smoke_adr)); // smoke trail tile 2
             }
 
             // Erase Minicar tiles (0xCFB2)
             // Reveal info from tile ram by copying to text ram
 
             // Bottom Line
-            uint16_t tile_bits = video.read_tile8(textram_adr - 0x2000 + 1) | minicar->tile_props;
-            video.write_text16(textram_adr, tile_bits);
+            uint16_t tile_bits = video->read_tile8(textram_adr - 0x2000 + 1) | minicar->tile_props;
+            video->write_text16(textram_adr, tile_bits);
             // Top Line
-            tile_bits = video.read_tile8(textram_adr - 0x2000 - 0x7F) | minicar->tile_props;
-            video.write_text16(textram_adr - 0x80, tile_bits);
+            tile_bits = video->read_tile8(textram_adr - 0x2000 - 0x7F) | minicar->tile_props;
+            video->write_text16(textram_adr - 0x80, tile_bits);
         }
 
         dst += 0x100; // Advance to next row in text ram
@@ -587,7 +587,7 @@ void OHiScore::blit_score_table()
     // Clear tile table ready for High Score Display
     uint32_t tile_addr = 0x10E000; // Tile Table 15
     for (int i = 0; i <= 0x3FF; i++)
-        video.write_tile32(&tile_addr, 0x200020);
+        video->write_tile32(&tile_addr, 0x200020);
 
     ohud.blit_text2(TEXT2_BEST_OR);   // Print "BEST OUTRUNNERS"
     ohud.blit_text1(TEXT1_SCORE_ETC); // Print Score, Name, Route, Record
@@ -628,8 +628,8 @@ void OHiScore::blit_digit()
             tile |= 0x300030;
         }
 
-        video.write_tile32(dst, tile);      // Output number digit
-        video.write_tile16(4 + dst, 0x5B);  // Output full stop following digit
+        video->write_tile32(dst, tile);      // Output number digit
+        video->write_tile16(4 + dst, 0x5B);  // Output full stop following digit
 
         dst += 0x100; // Advance to next text row
         pos++;
@@ -669,9 +669,9 @@ void OHiScore::blit_initials()
     // Write 3 initials for entries 1 to 7
     for (int i = 0; i < 7; i++)
     {
-        video.write_tile8(dst + 1, scores[pos].initial1);
-        video.write_tile8(dst + 3, scores[pos].initial2);
-        video.write_tile8(dst + 5, scores[pos].initial3);
+        video->write_tile8(dst + 1, scores[pos].initial1);
+        video->write_tile8(dst + 3, scores[pos].initial2);
+        video->write_tile8(dst + 5, scores[pos].initial3);
         pos++;
         dst += 0x100; // Advance to next text row
     }
@@ -694,10 +694,10 @@ void OHiScore::blit_route_map()
         uint32_t tiles = scores[pos++].maptiles;
 
         // eg e5 c8 c2 d1 (4 tile indexes of route map)
-        video.write_tile8(dst - 0x7F, (tiles >> 24) & 0xFF);
-        video.write_tile8(dst - 0x7D, (tiles >> 16) & 0xFF);
-        video.write_tile8(dst + 0x01, (tiles >> 8) & 0xFF);
-        video.write_tile8(dst + 0x03, tiles & 0xFF);
+        video->write_tile8(dst - 0x7F, (tiles >> 24) & 0xFF);
+        video->write_tile8(dst - 0x7D, (tiles >> 16) & 0xFF);
+        video->write_tile8(dst + 0x01, (tiles >> 8) & 0xFF);
+        video->write_tile8(dst + 0x03, tiles & 0xFF);
 
         dst += 0x100; // Advance to next text row
     }
@@ -726,16 +726,16 @@ void OHiScore::blit_lap_time()
             // Write laptime
             if (laptime[0] != TILE_PROPS)
             {
-                video.write_tile16(dst - 0x2, laptime[0]); // Minutes Digit 1
+                video->write_tile16(dst - 0x2, laptime[0]); // Minutes Digit 1
             }
             
-            video.write_tile16(0x0 + dst, laptime[1]); // Minutes Digit 2
-            video.write_tile16(0x2 + dst, 0x5E);       // '
-            video.write_tile16(0x4 + dst, laptime[2]); // Seconds Digit 1
-            video.write_tile16(0x6 + dst, laptime[3]); // Seconds Digit 2
-            video.write_tile16(0x8 + dst, 0x5F);       // '
-            video.write_tile16(0xA + dst, laptime[4]); // Milliseconds Digit 1
-            video.write_tile16(0xC + dst, laptime[5]); // Milliseconds Digit 2
+            video->write_tile16(0x0 + dst, laptime[1]); // Minutes Digit 2
+            video->write_tile16(0x2 + dst, 0x5E);       // '
+            video->write_tile16(0x4 + dst, laptime[2]); // Seconds Digit 1
+            video->write_tile16(0x6 + dst, laptime[3]); // Seconds Digit 2
+            video->write_tile16(0x8 + dst, 0x5F);       // '
+            video->write_tile16(0xA + dst, laptime[4]); // Milliseconds Digit 1
+            video->write_tile16(0xC + dst, laptime[5]); // Milliseconds Digit 2
         }
 
         dst += 0x100; // Advance to next text row

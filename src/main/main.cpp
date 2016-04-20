@@ -48,6 +48,8 @@
 // Initialize Shared Variables
 using namespace cannonball;
 
+static __attribute__((used)) const char * stack_cookie = "$STACK:100000";
+
 int    cannonball::state       = STATE_BOOT;
 double cannonball::frame_ms    = 0;
 int    cannonball::frame       = 0;
@@ -69,6 +71,7 @@ static void quit_func(int code)
     input.close();
     forcefeedback::close();
     delete menu;
+	delete video;
     SDL_Quit();
     exit(code);
 }
@@ -210,7 +213,7 @@ static void tick()
         cannonboard.write(outrun.outputs->dig_out, outrun.outputs->hw_motor_control);
 
     // Draw SDL Video
-    video.draw_frame();  
+	video->draw_frame();
 }
 
 static void main_loop()
@@ -271,6 +274,7 @@ int main(int argc, char* argv[])
         return 1; 
     }
 
+	video = new Video();
     menu = new Menu(&cannonboard);
 
     bool loaded = false;
@@ -309,7 +313,7 @@ int main(int argc, char* argv[])
 #endif
 
         // Initialize SDL Video
-        if (!video.init(&roms, &config.video))
+		if (!video->init(&roms, &config.video))
             quit_func(1);
 
 #ifdef COMPILE_SOUND_CODE

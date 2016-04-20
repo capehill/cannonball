@@ -240,11 +240,11 @@ void Menu::init()
     }
 
     outrun.select_course(false, config.engine.prototype != 0);
-    video.enabled = true;
-    video.sprite_layer->set_x_clip(false); // Stop clipping in wide-screen mode.
-    video.sprite_layer->reset();
-    video.clear_text_ram();
-    video.tile_layer->restore_tiles();
+	video->enabled = true;
+	video->sprite_layer->set_x_clip(false); // Stop clipping in wide-screen mode.
+	video->sprite_layer->reset();
+	video->clear_text_ram();
+	video->tile_layer->restore_tiles();
     ologo.enable(LOGO_Y);
 
     // Setup palette, road and colours for background
@@ -327,7 +327,7 @@ void Menu::tick_ui()
     // Skip odd frames at 60fps
     frame++;
 
-    video.clear_text_ram();
+	video->clear_text_ram();
 
     if (state == STATE_MENU)
     {
@@ -412,10 +412,10 @@ void Menu::draw_menu_options()
         {
             // Draw minicar
             if (i == cursor)
-                video.write_text32(ohud.translate(x - 3, y), roms.rom0.read32(TILES_MINICARS1));
+				video->write_text32(ohud.translate(x - 3, y), roms.rom0.read32(TILES_MINICARS1));
             // Erase minicar from this position
             else
-                video.write_text32(ohud.translate(x - 3, y), 0x20202020);
+				video->write_text32(ohud.translate(x - 3, y), 0x20202020);
         }
         y += 2;
     }
@@ -616,7 +616,7 @@ void Menu::tick_menu()
                 }
 
                 restart_video();
-                video.sprite_layer->set_x_clip(false);
+				video->sprite_layer->set_x_clip(false);
             }
             else if (SELECTED(ENTRY_SCALE))
             {
@@ -1021,8 +1021,8 @@ void Menu::restart_video()
     if (config.sound.enabled)
         cannonball::audio.stop_audio();
     #endif
-    video.disable();
-    video.init(&roms, &config.video);
+	video->disable();
+	video->init(&roms, &config.video);
     #ifdef COMPILE_SOUND_CODE
     osoundint.init();
     if (config.sound.enabled)

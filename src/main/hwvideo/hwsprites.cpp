@@ -146,7 +146,7 @@ void hwsprites::swap()
         if (shadow && pix == 0xa)                                                                     \
         {                                                                                             \
             pPixel[x] &= 0xfff;                                                                       \
-            pPixel[x] += ((S16_PALETTE_ENTRIES * 2) - ((video.read_pal16(pPixel[x]) & 0x8000) >> 3)); \
+			pPixel[x] += ((S16_PALETTE_ENTRIES * 2) - ((video->read_pal16(pPixel[x]) & 0x8000) >> 3)); \
         }                                                                                             \
         else                                                                                          \
         {                                                                                             \
@@ -227,7 +227,7 @@ void hwsprites::render(const uint8_t priority)
             // skip drawing if not within the cliprect
             if (y >= 0 && y < config.s16_height)
             {
-                uint16_t* pPixel = &video.pixels[y * config.s16_width];
+				uint16_t* pPixel = &video->pixels[y * config.s16_width];
                 int32_t xacc = 0;
 
                 // non-flipped case

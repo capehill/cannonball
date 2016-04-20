@@ -29,6 +29,11 @@
 #include "engine/ooutputs.hpp"
 #include "directx/ffeedback.hpp"
 
+    const  uint8_t OOutputs::MOTOR_OFF    = 0;
+    const  uint8_t OOutputs::MOTOR_RIGHT  = 0x5;
+    const  uint8_t OOutputs::MOTOR_CENTRE = 0x8;
+    const  uint8_t OOutputs::MOTOR_LEFT   = 0xB;
+
 OOutputs::OOutputs(void)
 {
     chute1.output_bit  = D_COIN1_SUCC;

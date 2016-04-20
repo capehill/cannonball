@@ -35,7 +35,7 @@ OMap::~OMap(void)
 void OMap::init()
 {
     oferrari.car_ctrl_active = false; // -1
-    video.clear_text_ram();
+    video->clear_text_ram();
     osprites.disable_sprites();
     otraffic.disable_traffic();
     osprites.clear_palette_data();
@@ -73,7 +73,7 @@ void OMap::tick()
     {
         // Initialise Route Info
         case MAP_INIT:
-            video.sprite_layer->set_x_clip(false); // Don't clip the area in wide-screen mode
+            video->sprite_layer->set_x_clip(false); // Don't clip the area in wide-screen mode
             map_route  = roms.rom0.read8(MAP_ROUTE_LOOKUP + ostats.routes[1]);
             map_pos    = 0;
             map_stage1 = 0;

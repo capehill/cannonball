@@ -75,4 +75,4 @@ private:
     void refresh_palette(uint32_t);
 };
 
-extern Video video;
+extern Video *video;

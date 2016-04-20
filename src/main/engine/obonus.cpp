@@ -179,15 +179,15 @@ void OBonus::blit_bonus_secs()
     }
     else
     {
-        video.write_text16(text_addr, TILE_ZERO);
-        video.write_text16(text_addr | COL2, TILE_ZERO);
+        video->write_text16(text_addr, TILE_ZERO);
+        video->write_text16(text_addr | COL2, TILE_ZERO);
         text_addr += 2;        
     }
 
     // Blit Digit 2
     ohud.blit_large_digit(&text_addr, d2);
     // Blit Dot
-    video.write_text16(text_addr | COL2, TILE_DOT);
+    video->write_text16(text_addr | COL2, TILE_DOT);
     text_addr += 2;
     // Blit Digit 3
     ohud.blit_large_digit(&text_addr, d3);

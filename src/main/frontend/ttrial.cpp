@@ -61,8 +61,8 @@ int TTrial::tick()
             outrun.select_course(config.engine.jap != 0, config.engine.prototype != 0); // Need to setup correct course map graphics.
             config.load_tiletrial_scores();
             osprites.init();
-            video.enabled = true;
-            video.sprite_layer->set_x_clip(false);
+			video->enabled = true;
+			video->sprite_layer->set_x_clip(false);
             omap.init();
             omap.load_sprites();
             omap.position_ferrari(FERRARI_POS[level_selected = 0]);

@@ -127,16 +127,16 @@ void OHud::draw_mini_map(uint32_t tile_addr)
     const uint16_t BASE = 0x8B00;
 
     uint16_t tile = (BASE | roms.rom0.read8(&tile_addr));
-    video.write_text16(dst, tile);
+    video->write_text16(dst, tile);
 
     tile = BASE | roms.rom0.read8(&tile_addr);
-    video.write_text16(2 + dst, tile);
+    video->write_text16(2 + dst, tile);
 
     tile = BASE | roms.rom0.read8(&tile_addr);
-    video.write_text16(0x80 + dst, tile);
+    video->write_text16(0x80 + dst, tile);
 
     tile = BASE | roms.rom0.read8(&tile_addr);
-    video.write_text16(0x82 + dst, tile);
+    video->write_text16(0x82 + dst, tile);
 }
 
 // Print Timer To Top Left Hand Corner Of Screen
@@ -153,8 +153,8 @@ void OHud::draw_timer1(uint16_t time)
         draw_timer2(time, 0x1100BE, BASE_TILE);
 
         // Blank out the OFF text area
-        video.write_text16(0x110C2, 0);
-        video.write_text16(0x110C2 + 0x80, 0);
+        video->write_text16(0x110C2, 0);
+        video->write_text16(0x110C2 + 0x80, 0);
     }
     else
     {
@@ -163,12 +163,12 @@ void OHud::draw_timer1(uint16_t time)
         const uint16_t O = (('O' - 0x41) * 2) + PAL; // Convert character to real index (D0-0x41) so A is 0x01
         const uint16_t F = (('F' - 0x41) * 2) + PAL;
         
-        video.write_text16(&dst_addr,       O);     // Write first row to text ram
-        video.write_text16(0x7E + dst_addr, O + 1); // Write second row to text ram
-        video.write_text16(&dst_addr,       F);     // Write first row to text ram
-        video.write_text16(0x7E + dst_addr, F + 1); // Write second row to text ram
-        video.write_text16(&dst_addr,       F);     // Write first row to text ram
-        video.write_text16(0x7E + dst_addr, F + 1); // Write second row to text ram
+        video->write_text16(&dst_addr,       O);     // Write first row to text ram
+        video->write_text16(0x7E + dst_addr, O + 1); // Write second row to text ram
+        video->write_text16(&dst_addr,       F);     // Write first row to text ram
+        video->write_text16(0x7E + dst_addr, F + 1); // Write second row to text ram
+        video->write_text16(&dst_addr,       F);     // Write first row to text ram
+        video->write_text16(0x7E + dst_addr, F + 1); // Write second row to text ram
     }
 }
 
@@ -182,8 +182,8 @@ void OHud::draw_timer2(uint16_t time_counter, uint32_t addr, uint16_t base_tile)
 
     // Low Digit
     uint16_t value = (digit1 << 1) + base_tile;
-    video.write_text16(0x02 + addr, value);
-    video.write_text16(0x82 + addr, value+1);
+    video->write_text16(0x02 + addr, value);
+    video->write_text16(0x82 + addr, value+1);
 
     // High Digit
     value = (digit2 << 1);
@@ -191,13 +191,13 @@ void OHud::draw_timer2(uint16_t time_counter, uint32_t addr, uint16_t base_tile)
     if (value)
     {
         value += base_tile;
-        video.write_text16(0x00 + addr, value);
-        video.write_text16(0x80 + addr, value+1);
+        video->write_text16(0x00 + addr, value);
+        video->write_text16(0x80 + addr, value+1);
     }
     else
     {
-        video.write_text16(0x00 + addr, 0);
-        video.write_text16(0x80 + addr, 0);
+        video->write_text16(0x00 + addr, 0);
+        video->write_text16(0x80 + addr, 0);
     }
 }
 
@@ -208,17 +208,17 @@ void OHud::draw_lap_timer(uint32_t addr, uint8_t* digits, uint8_t ms_value)
     const uint16_t APOSTROPHE2 = 0x835F;
 
     // Write Minute Digit
-    video.write_text16(&addr, BASE | digits[0]);
-    video.write_text16(&addr, APOSTROPHE1);
+    video->write_text16(&addr, BASE | digits[0]);
+    video->write_text16(&addr, APOSTROPHE1);
 
     // Write Seconds
-    video.write_text16(&addr, BASE | (digits[1] & 0xF0) >> 4);
-    video.write_text16(&addr, BASE | (digits[1] & 0xF));
-    video.write_text16(&addr, APOSTROPHE2);
+    video->write_text16(&addr, BASE | (digits[1] & 0xF0) >> 4);
+    video->write_text16(&addr, BASE | (digits[1] & 0xF));
+    video->write_text16(&addr, APOSTROPHE2);
 
     // Write Milliseconds
-    video.write_text16(&addr, BASE | (ms_value & 0xF0) >> 4);
-    video.write_text16(&addr, BASE | (ms_value & 0xF));
+    video->write_text16(&addr, BASE | (ms_value & 0xF0) >> 4);
+    video->write_text16(&addr, BASE | (ms_value & 0xF));
 }
 
 // Draw Score (In-Game HUD)
@@ -265,15 +265,15 @@ void OHud::draw_score(uint32_t addr, const uint32_t score, uint8_t font)
     for (uint8_t i = 0; i < 7; i++)
     {
         if (!found && !digits[i])
-            video.write_text16(&addr, BLANK);
+            video->write_text16(&addr, BLANK);
         else
         {
-            video.write_text16(&addr, digits[i] + BASE);
+            video->write_text16(&addr, digits[i] + BASE);
             found = true;
         }
     }
 
-    video.write_text16(&addr, digits[7] + BASE); // Always draw last digit
+    video->write_text16(&addr, digits[7] + BASE); // Always draw last digit
     delete[] digits;
 }
 
@@ -306,15 +306,15 @@ void OHud::draw_score_tile(uint32_t addr, const uint32_t score, uint8_t font)
     for (uint8_t i = 0; i < 7; i++)
     {
         if (!found && !digits[i])
-            video.write_tile16(&addr, BLANK);
+            video->write_tile16(&addr, BLANK);
         else
         {
-            video.write_tile16(&addr, digits[i] + BASE);
+            video->write_tile16(&addr, digits[i] + BASE);
             found = true;
         }
     }
 
-    video.write_tile16(&addr, digits[7] + BASE); // Always draw last digit
+    video->write_tile16(&addr, digits[7] + BASE); // Always draw last digit
     delete[] digits;
 }
 
@@ -325,14 +325,14 @@ void OHud::draw_stage_number(uint32_t addr, uint8_t digit, uint16_t col)
 {
     if (digit < 10)
     {
-        video.write_text16(addr, digit + (col << 8) + DIGIT_BASE);
+        video->write_text16(addr, digit + (col << 8) + DIGIT_BASE);
     }
     else
     {
         int hex = outils::convert16_dechex(digit);
 
-        video.write_text16(addr + 2, (hex & 0xF) + (col << 8) + DIGIT_BASE);
-        video.write_text16(addr    , (hex >> 4)  + (col << 8) + DIGIT_BASE);
+        video->write_text16(addr + 2, (hex & 0xF) + (col << 8) + DIGIT_BASE);
+        video->write_text16(addr    , (hex >> 4)  + (col << 8) + DIGIT_BASE);
     }
 }
 
@@ -383,7 +383,7 @@ void OHud::draw_rev_counter()
             else tile |= GREEN;
         }
         
-        video.write_text16(addr, tile);
+        video->write_text16(addr, tile);
 
         // On odd indexes, we don't increment to next word - to effectively shorten the length of the rev counter
         // It would be twice as long otherwise
@@ -424,18 +424,18 @@ void OHud::blit_speed(uint32_t dst_addr, uint16_t speed)
     digit1 <<= 1;
     digit1 += TILE_BASE;
     
-    video.write_text16(&dst_addr, digit3);
-    video.write_text16(&dst_addr, digit2);
-    video.write_text16(dst_addr, digit1);
+    video->write_text16(&dst_addr, digit3);
+    video->write_text16(&dst_addr, digit2);
+    video->write_text16(dst_addr, digit1);
     dst_addr += 0x7C; // Set to next horizontal line of number tiles
 
     // Blit Bottom Line Of Tiles
     if (digit3 != 0) digit3++;
     if (digit2 != 0) digit2++;
     digit1++;
-    video.write_text16(&dst_addr, digit3);
-    video.write_text16(&dst_addr, digit2);
-    video.write_text16(dst_addr, digit1);
+    video->write_text16(&dst_addr, digit3);
+    video->write_text16(&dst_addr, digit2);
+    video->write_text16(dst_addr, digit1);
 }
 
 // Blit large digit spanning two rows.
@@ -443,8 +443,8 @@ void OHud::blit_speed(uint32_t dst_addr, uint16_t speed)
 // Source: 0x9BF2
 void OHud::blit_large_digit(uint32_t* addr, uint8_t digit)
 {
-    video.write_text16(*addr,        (digit + 0x80) | 0x8C00);
-    video.write_text16(*addr + 0x80, (digit + 0x81) | 0x8C00);
+    video->write_text16(*addr,        (digit + 0x80) | 0x8C00);
+    video->write_text16(*addr + 0x80, (digit + 0x81) | 0x8C00);
 
     *addr += 2;
 }
@@ -495,12 +495,12 @@ void OHud::draw_insert_coin()
                 {                
                     // Blit each tile
                     for (uint16_t i = 0; i < sizeof(PRESS_START); i++)
-                        video.write_text16(&dst_addr, (0x8700 | PRESS_START[i]));
+                        video->write_text16(&dst_addr, (0x8700 | PRESS_START[i]));
                 }
                 else
                 {
                     for (uint16_t i = 0; i < sizeof(PRESS_START); i++)
-                        video.write_text16(&dst_addr, (0x8700 | 0x20));
+                        video->write_text16(&dst_addr, (0x8700 | 0x20));
                 }
             }
             else
@@ -520,7 +520,7 @@ void OHud::draw_credits()
     }
     else
     {
-        video.write_text16(0x110D44, ostats.credits | 0x8630); // blit digit
+        video->write_text16(0x110D44, ostats.credits | 0x8630); // blit digit
         blit_text1(ostats.credits >= 2 ? TEXT1_CREDITS : TEXT1_CREDIT);
     }
 }
@@ -563,7 +563,7 @@ void OHud::blit_text1(uint32_t src_addr)
     for (uint16_t i = 0; i <= counter; i++)
     {
         data = (data & 0xFF00) | roms.rom0.read8(&src_addr);
-        video.write_text16(&dst_addr, data);
+        video->write_text16(&dst_addr, data);
     }
 }
 
@@ -578,7 +578,7 @@ void OHud::blit_text1(uint8_t x, uint8_t y, uint32_t src_addr)
     for (uint16_t i = 0; i <= counter; i++)
     {
         data = (data & 0xFF00) | roms.rom0.read8(&src_addr);
-        video.write_text16(&dst_addr, data);
+        video->write_text16(&dst_addr, data);
     }
 }
 
@@ -615,7 +615,7 @@ void OHud::blit_text2(uint32_t src_addr)
         if (data == 0x20)
         {
             data = 0;
-            video.write_text16(&dst_addr, data); // Write blank space to text ram
+            video->write_text16(&dst_addr, data); // Write blank space to text ram
         }
         // Normal character
         else
@@ -623,10 +623,10 @@ void OHud::blit_text2(uint32_t src_addr)
             // Convert character to real index (D0-0x41) so A is 0x01
             data -= 0x41;
             data = (data * 2) + pal;
-            video.write_text16(&dst_addr, data); // Write first row to text ram
+            video->write_text16(&dst_addr, data); // Write first row to text ram
             data++;
         }
-        video.write_text16(0x7E + dst_addr, data); // Write second row to text ram
+        video->write_text16(0x7E + dst_addr, data); // Write second row to text ram
     }
 }
 
@@ -657,8 +657,8 @@ void OHud::blit_text_big(const uint8_t Y, const char* text, bool do_notes)
     // Clear complete row in text ram before blitting
     for (uint8_t x = 0; x < 40; x++)
     {
-        video.write_text16(translate(x, Y) + 0x110000, 0); // Write blank space to text ram
-        video.write_text16(translate(x, Y) + 0x11007E, 0); // Write blank space to text ram
+        video->write_text16(translate(x, Y) + 0x110000, 0); // Write blank space to text ram
+        video->write_text16(translate(x, Y) + 0x11007E, 0); // Write blank space to text ram
     }
 
     // Draw Notes
@@ -668,8 +668,8 @@ void OHud::blit_text_big(const uint8_t Y, const char* text, bool do_notes)
         const uint32_t NOTE_TILES1 = 0x8A7A8A7B;
         const uint32_t NOTE_TILES2 = 0x8A7C8A7D;
 
-        video.write_text32(translate(X - 2, Y) + 0x110000, NOTE_TILES1);
-        video.write_text32(translate(X - 2, Y) + 0x110080, NOTE_TILES2);
+        video->write_text32(translate(X - 2, Y) + 0x110000, NOTE_TILES1);
+        video->write_text32(translate(X - 2, Y) + 0x110080, NOTE_TILES2);
     }
 
     uint32_t dst_addr = translate(X, Y) + 0x110000;
@@ -687,15 +687,15 @@ void OHud::blit_text_big(const uint8_t Y, const char* text, bool do_notes)
             const uint16_t pal = 0x8CA0;
             c -= 0x40;
             c = (c * 2);
-            video.write_text16(&dst_addr,       c + pal);     // Write first row to text ram
-            video.write_text16(0x7E + dst_addr, c + pal + 1); // Write second row to text ram
+            video->write_text16(&dst_addr,       c + pal);     // Write first row to text ram
+            video->write_text16(0x7E + dst_addr, c + pal + 1); // Write second row to text ram
         }
         // Blank space
         else if (c == ' ')
         {
             c = 0;
-            video.write_text16(&dst_addr, c); // Write blank space to text ram
-            video.write_text16(0x7E + dst_addr, c); // Write blank space to text ram
+            video->write_text16(&dst_addr, c); // Write blank space to text ram
+            video->write_text16(0x7E + dst_addr, c); // Write blank space to text ram
         }
         // Normal character
         if (c >= 'A' && c <= 'Z')
@@ -704,8 +704,8 @@ void OHud::blit_text_big(const uint8_t Y, const char* text, bool do_notes)
             // Convert character to real index (D0-0x41) so A is 0x01
             c -= 0x41;
             c = (c * 2);
-            video.write_text16(&dst_addr,       c + pal);     // Write first row to text ram
-            video.write_text16(0x7E + dst_addr, c + pal + 1); // Write second row to text ram
+            video->write_text16(&dst_addr,       c + pal);     // Write first row to text ram
+            video->write_text16(0x7E + dst_addr, c + pal + 1); // Write second row to text ram
         }       
     }
 }
@@ -736,7 +736,7 @@ void OHud::blit_text_new(uint16_t x, uint16_t y, const char* text, uint16_t pal)
         else if (c == '.')
             c = 0x5b;
 
-        video.write_text16(&dst_addr, (pal << 8) | c);
+        video->write_text16(&dst_addr, (pal << 8) | c);
     }
 }
 
