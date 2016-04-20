@@ -30,7 +30,7 @@ bool RenderBase::sdl_screen_size()
 }
 
 // See: SDL_PixelFormat
-#define CURRENT_RGB() (r << Rshift) | (g << Gshift) | (b << Bshift);
+#define CURRENT_RGB() (r << Rshift) | (g << Gshift) | (b << Bshift) | (255 << 24); // TODO Ashift
 
 void RenderBase::convert_palette(uint32_t adr, uint32_t r, uint32_t g, uint32_t b)
 {
