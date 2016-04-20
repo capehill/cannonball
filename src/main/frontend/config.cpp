@@ -60,9 +60,10 @@ void Config::load(const std::string &filename)
     {
         read_xml(filename, pt_config, boost::property_tree::xml_parser::trim_whitespace);
     }
-    catch (std::exception &e)
+    catch (... /*std::exception &e*/)
     {
-        std::cout << "Error: " << e.what() << "\n";
+        //std::cout << "Error: " << e.what() << "\n";
+        return;
     }
 
     // ------------------------------------------------------------------------
@@ -266,9 +267,9 @@ void Config::load_scores(const std::string &filename)
     {
         read_xml(engine.jap ? filename + "_jap.xml" : filename + ".xml" , pt, boost::property_tree::xml_parser::trim_whitespace);
     }
-    catch (std::exception &e)
+    catch (... /*std::exception &e*/)
     {
-        e.what();
+        //e.what();
         return;
     }
     
@@ -337,12 +338,12 @@ void Config::load_tiletrial_scores()
     {
         read_xml(engine.jap ? filename + "_jap.xml" : filename + ".xml" , pt, boost::property_tree::xml_parser::trim_whitespace);
     }
-    catch (std::exception &e)
+    catch (.../*std::exception &e*/)
     {
         for (int i = 0; i < 15; i++)
             ttrial.best_times[i] = COUNTER_1M_15;
 
-        e.what();
+        //e.what();
         return;
     }
 
