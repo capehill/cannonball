@@ -57,7 +57,7 @@ private:
 
     // Low value  = Responsiveness, chance of drop out.
     // High value = Laggy, less chance of drop out.
-    static const uint32_t SAMPLES  = 1024;
+	static const uint32_t SAMPLES  = 2 * 1024;
 
     // Latency (in ms) and thus target buffer size
     const static int SND_DELAY = 20;
