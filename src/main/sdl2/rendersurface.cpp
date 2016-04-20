@@ -13,6 +13,8 @@
 #include "rendersurface.hpp"
 #include "frontend/config.hpp"
 
+#include <proto/exec.h>
+
 RenderSurface::RenderSurface()
 {
 }
@@ -35,7 +37,7 @@ bool RenderSurface::init(int src_width, int src_height,
     if (!RenderBase::sdl_screen_size())
         return false;
 
-    int flags = SDL_FLAGS;
+    int flags = 0; //SDL_FLAGS;
 
     // In SDL2, we calculate the output dimensions, but then in draw_frame() we won't do any scaling: SDL2
     // will do that for us, using the rects passed to SDL_RenderCopy().
@@ -158,6 +160,7 @@ void RenderSurface::disable()
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    SDL_FreeSurface(surface);
 }
 
 bool RenderSurface::start_frame()
@@ -167,12 +170,29 @@ bool RenderSurface::start_frame()
 
 bool RenderSurface::finalize_frame()
 {
+	//Uint32 a, b, c, d, e;
+
+	//a = SDL_GetTicks();
     // SDL2 block
     SDL_UpdateTexture(texture, NULL, screen_pixels, src_width * sizeof (Uint32));
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, &src_rect, &dst_rect);
-    SDL_RenderPresent(renderer);
+	
+	//b = SDL_GetTicks();
+
+	//SDL_RenderClear(renderer);
+	
+	//c = SDL_GetTicks();
+	
+	SDL_RenderCopy(renderer, texture, &src_rect, &dst_rect);
+	
+	//d = SDL_GetTicks();
+
+	SDL_RenderPresent(renderer);
     //
+
+	//e = SDL_GetTicks();
+
+	//IExec->DebugPrintF("UpdateTexture %d, RenderClear %d, RenderCopy %d, RenderPresent %d\n",
+	//	  b-a, c-b, d-c, e-d);
 
     return true;
 }
@@ -180,8 +200,15 @@ bool RenderSurface::finalize_frame()
 void RenderSurface::draw_frame(uint16_t* pixels)
 {
     uint32_t* spix = screen_pixels;
-
+	//Uint32 a = SDL_GetTicks();
     // Lookup real RGB value from rgb array for backbuffer
-    for (int i = 0; i < (src_width * src_height); i++)
-	*(spix++) = rgb[*(pixels++) & ((S16_PALETTE_ENTRIES * 3) - 1)];
+	
+	int last = src_width * src_height;
+	uint16_t mask = (S16_PALETTE_ENTRIES * 3) - 1;
+
+	for (int i = 0; i < last; ++i) {
+    	*(spix++) = rgb[*(pixels++) & mask];
+	}
+
+	//IExec->DebugPrintF("draw_frame %d\n", SDL_GetTicks() - a);
 }
